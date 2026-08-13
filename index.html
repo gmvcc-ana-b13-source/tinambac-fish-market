@@ -570,49 +570,37 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-
 <script>
-
-
-/*
-==================================================
-SUPABASE CONNECTION
-==================================================
-*/
 
 const SUPABASE_URL =
     "https://eyflalxgkqekrebzxxra.supabase.co";
-
 
 const SUPABASE_KEY =
     "sb_publishable_Ha8tHUn1V9aa5OPuZNY8tQ_e8wJWK_b";
 
 
-const supabase =
+const supabaseClient =
     window.supabase.createClient(
         SUPABASE_URL,
         SUPABASE_KEY
     );
 
 
-
-/*
-==================================================
-LOAD PRODUCTS
-==================================================
-*/
-
 async function loadProducts() {
 
-
     const productList =
-        document.getElementById(
-            "product-list"
-        );
+        document.getElementById("product-list");
+
+
+    productList.innerHTML = `
+        <div class="loading">
+            Loading fresh fish...
+        </div>
+    `;
 
 
     const { data, error } =
-        await supabase
+        await supabaseClient
 
             .from("products")
 
@@ -649,22 +637,14 @@ async function loadProducts() {
 
 
         productList.innerHTML = `
-
             <div class="loading">
-
                 Unable to load products.
-
                 <br><br>
-
                 Please try again later.
-
             </div>
-
         `;
 
-
         return;
-
     }
 
 
@@ -674,192 +654,134 @@ async function loadProducts() {
     ) {
 
         productList.innerHTML = `
-
             <div class="loading">
-
                 No fresh fish products
                 are currently available.
-
                 <br><br>
-
                 Check back soon!
-
             </div>
-
         `;
 
-
         return;
-
     }
 
 
     productList.innerHTML = "";
 
 
-    data.forEach(
-        function(product) {
+    data.forEach(function(product) {
+
+        const card =
+            document.createElement("div");
 
 
-            const card =
-                document.createElement(
-                    "div"
-                );
+        card.className =
+            "product-card";
 
 
-            card.className =
-                "product-card";
+        let imageHTML;
 
 
-            let imageHTML;
+        if (product.image_url) {
+
+            imageHTML = `
+                <img
+                    class="product-image"
+                    src="${product.image_url}"
+                    alt="${product.name}"
+                >
+            `;
+
+        } else {
+
+            imageHTML = `
+                <div class="no-image">
+                    🐟
+                </div>
+            `;
+
+        }
 
 
-            if (
-                product.image_url
-            ) {
+        card.innerHTML = `
 
-                imageHTML = `
+            ${imageHTML}
 
-                    <img
-                        class="product-image"
-                        src="${product.image_url}"
-                        alt="${product.name}"
-                    >
+            <div class="product-info">
 
-                `;
+                <h3>
+                    ${product.name}
+                </h3>
 
-            } else {
+                <p>
+                    ${
+                        product.description ||
+                        "Fresh seafood product."
+                    }
+                </p>
 
-                imageHTML = `
+                <div class="price">
 
-                    <div class="no-image">
+                    ₱${Number(
+                        product.price
+                    ).toFixed(2)}
 
-                        🐟
-
-                    </div>
-
-                `;
-
-            }
-
-
-            card.innerHTML = `
-
-                ${imageHTML}
-
-                <div class="product-info">
-
-                    <h3>
-                        ${product.name}
-                    </h3>
-
-                    <p>
-                        ${
-                            product.description
-                            || "Fresh seafood product."
-                        }
-                    </p>
-
-                    <div class="price">
-
-                        ₱${Number(
-                            product.price
-                        ).toFixed(2)}
-
-                        / ${product.unit}
-
-                    </div>
-
-                    <p>
-
-                        Available:
-                        ${product.stock_quantity}
-
-                        ${product.unit}
-
-                    </p>
-
-
-                    <button
-                        class="order-btn"
-                        onclick="orderProduct(
-                            '${product.id}'
-                        )">
-
-                        Order Now
-
-                    </button>
+                    / ${product.unit}
 
                 </div>
 
-            `;
+                <p>
+                    Available:
+                    ${product.stock_quantity}
+                    ${product.unit}
+                </p>
+
+                <button
+                    class="order-btn"
+                    onclick="orderProduct('${product.id}')">
+
+                    Order Now
+
+                </button>
+
+            </div>
+
+        `;
 
 
-            productList.appendChild(
-                card
-            );
+        productList.appendChild(card);
 
-        }
-    );
+    });
 
 }
 
 
-
-/*
-==================================================
-ORDER BUTTON
-==================================================
-*/
-
-function orderProduct(
-    productId
-) {
+function orderProduct(productId) {
 
     alert(
-
-        "Product selected: "
-        + productId
-        + "\n\n"
-        + "Customer login and shopping cart "
-        + "will be added next."
-
+        "Product selected: " +
+        productId +
+        "\n\n" +
+        "Customer login and shopping cart " +
+        "will be added next."
     );
 
 }
 
-
-
-/*
-==================================================
-VENDOR REGISTRATION
-==================================================
-*/
 
 function vendorRegistration() {
 
     alert(
-
         "Vendor registration will be available soon."
-
     );
 
 }
 
 
-
-/*
-==================================================
-START
-==================================================
-*/
-
 loadProducts();
 
-
 </script>
-
-
+    
 </body>
 
 </html>
