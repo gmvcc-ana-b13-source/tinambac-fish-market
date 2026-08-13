@@ -605,15 +605,21 @@ async function loadProducts() {
             .from("products")
 
             .select(`
-                id,
-                name,
-                description,
-                price,
-                unit,
-                stock_quantity,
-                image_url,
-                vendor_id
-            `)
+            id,
+            name,
+            description,
+            price,
+            unit,
+            stock_quantity,
+            image_url,
+            vendor_id,
+            vendors (
+                business_name,
+                selling_location,
+                barangay,
+                municipality
+            )
+        `)
 
             .gt(
                 "stock_quantity",
@@ -735,6 +741,34 @@ async function loadProducts() {
                     ${product.stock_quantity}
                     ${product.unit}
                 </p>
+                <div style="margin: 10px 0; color: #555;">
+
+    <strong>
+        🏪
+        ${
+            product.vendors
+                ? product.vendors.business_name
+                : "Local Fish Vendor"
+        }
+    </strong>
+
+    <br>
+
+    <span>
+        📍
+        ${
+            product.vendors
+                ? (
+                    product.vendors.selling_location ||
+                    product.vendors.barangay ||
+                    product.vendors.municipality ||
+                    "Tinambac, Camarines Sur"
+                )
+                : "Tinambac, Camarines Sur"
+        }
+    </span>
+
+</div>
 
                 <button
                     class="order-btn"
