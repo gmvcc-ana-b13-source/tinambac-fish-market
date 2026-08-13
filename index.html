@@ -221,5 +221,44 @@
     <p>Tinambac, Camarines Sur, Philippines</p>
 </footer>
 
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+    const SUPABASE_URL = "https://eyflalxgkqekrebzxxra.supabase.co";
+
+    const SUPABASE_KEY = "sb_publishable_Ha8tHUn1V9aa5OPuZNY8tQ_e8wJWK_b";
+
+    const supabase = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+</script>
+
+<script>
+
+    function orderProduct(productName) {
+
+        alert(
+            "You selected: " +
+            productName +
+            "\n\nOur online ordering system will allow you to continue with your order once you sign in."
+        );
+
+    }
+
+
+    function vendorRegistration() {
+
+        alert(
+            "Vendor registration will be available soon."
+        );
+
+    }
+
+</script>
+
 </body>
 </html>
