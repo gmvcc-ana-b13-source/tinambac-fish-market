@@ -374,6 +374,39 @@
 
 </header>
 
+<div
+    id="cart-bar"
+    style="
+        background:#ffffff;
+        padding:15px 25px;
+        text-align:right;
+        box-shadow:0 2px 8px rgba(0,0,0,0.08);
+        position:sticky;
+        top:0;
+        z-index:100;
+    ">
+
+    🛒 Cart:
+    <strong id="cart-count">0</strong>
+    item(s)
+
+    <button
+        onclick="showCart()"
+        style="
+            margin-left:10px;
+            padding:8px 15px;
+            border:none;
+            border-radius:6px;
+            background:#087f8c;
+            color:white;
+            cursor:pointer;
+        ">
+
+        View Cart
+
+    </button>
+
+</div>
 
 
 <section class="hero" id="home">
@@ -770,14 +803,14 @@ async function loadProducts() {
 
 </div>
 
-                <button
-                    class="order-btn"
-                    onclick="orderProduct('${product.id}')">
+             <button
+    class="order-btn"
+    onclick="addToCart('${product.id}')">
 
-                    Order Now
+    Add to Cart
 
-                </button>
-
+        </button>
+        
             </div>
 
         `;
@@ -790,7 +823,214 @@ async function loadProducts() {
 }
 
 
-function orderProduct(productId) {
+let shoppingCart = [];
+
+
+async function addToCart(productId) {
+
+    const { data: product, error } =
+        await supabaseClient
+
+            .from("products")
+
+            .select(`
+                id,
+                name,
+                description,
+                price,
+                unit,
+                stock_quantity,
+                image_url,
+                vendor_id,
+                vendors (
+                    business_name,
+                    selling_location,
+                    barangay,
+                    municipality
+                )
+            `)
+
+            .eq("id", productId)
+
+            .single();
+
+
+    if (error) {
+
+        console.error(
+            "Unable to get product:",
+            error
+        );
+
+        alert(
+            "Unable to add this product to your cart."
+        );
+
+        return;
+    }
+
+
+    if (
+        !product ||
+        product.stock_quantity <= 0
+    ) {
+
+        alert(
+            "This product is currently out of stock."
+        );
+
+        return;
+    }
+
+function updateCartDisplay() {
+
+    const cartCount =
+        document.getElementById(
+            "cart-count"
+        );
+
+
+    const totalItems =
+        shoppingCart.reduce(
+            function(total, item) {
+
+                return total + item.quantity;
+
+            },
+            0
+        );
+
+
+    cartCount.textContent =
+        totalItems;
+
+}
+    function showCart() {
+
+    if (
+        shoppingCart.length === 0
+    ) {
+
+        alert(
+            "Your shopping cart is empty."
+        );
+
+        return;
+    }
+
+
+    let message =
+        "YOUR SHOPPING CART\n\n";
+
+
+    let total = 0;
+
+
+    shoppingCart.forEach(
+        function(item) {
+
+            message +=
+                item.product_name +
+                "\n" +
+                item.quantity +
+                " " +
+                item.unit +
+                " × ₱" +
+                item.unit_price.toFixed(2) +
+                " = ₱" +
+                item.subtotal.toFixed(2) +
+                "\n\n";
+
+
+            total +=
+                item.subtotal;
+
+        }
+    );
+
+
+    message +=
+        "TOTAL: ₱" +
+        total.toFixed(2);
+
+
+    alert(message);
+
+}
+    const existingItem =
+        shoppingCart.find(
+            item =>
+                item.product_id === product.id
+        );
+
+
+    if (existingItem) {
+
+        if (
+            existingItem.quantity
+            >= product.stock_quantity
+        ) {
+
+            alert(
+                "You have reached the available stock."
+            );
+
+            return;
+        }
+
+
+        existingItem.quantity += 1;
+
+
+        existingItem.subtotal =
+            existingItem.quantity *
+            existingItem.unit_price;
+
+    } else {
+
+        shoppingCart.push({
+
+            product_id:
+                product.id,
+
+            product_name:
+                product.name,
+
+            unit:
+                product.unit,
+
+            unit_price:
+                Number(product.price),
+
+            quantity:
+                1,
+
+            subtotal:
+                Number(product.price),
+
+            vendor_id:
+                product.vendor_id,
+
+            vendor_name:
+                product.vendors
+                    ? product.vendors.business_name
+                    : "Local Fish Vendor"
+
+        });
+
+    }
+
+
+    updateCartDisplay();
+
+
+    alert(
+        product.name +
+        " has been added to your cart."
+    );
+
+}
+    {
 
     alert(
         "Product selected: " +
