@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Tinambac Fish Market</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f8fa;
+            color: #1f2933;
+        }
+
+        header {
+            background: #087f8c;
+            color: white;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 15px;
+        }
+
+        .hero {
+            background: linear-gradient(
+                rgba(0, 90, 100, 0.75),
+                rgba(0, 90, 100, 0.75)
+            ),
+            url("https://images.unsplash.com/photo-1544943910-4c1dc44aab44?auto=format&fit=crop&w=1600&q=80");
+
+            background-size: cover;
+            background-position: center;
+            min-height: 430px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+            color: white;
+            padding: 40px 20px;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 20px;
+            line-height: 1.6;
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 14px 28px;
+            background: #f4b942;
+            color: #17202a;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .section {
+            padding: 50px 25px;
+            text-align: center;
+        }
+
+        .section h2 {
+            color: #087f8c;
+            font-size: 32px;
+        }
+
+        .cards {
+            max-width: 1100px;
+            margin: 30px auto 0;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: white;
+            width: 300px;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            color: #087f8c;
+        }
+
+        footer {
+            background: #12343b;
+            color: white;
+            text-align: center;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 700px) {
+            header {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            nav a {
+                margin: 0 8px;
+            }
+
+            .hero h1 {
+                font-size: 34px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">🐟 Tinambac Fish Market</div>
+
+    <nav>
+        <a href="#">Home</a>
+        <a href="#">Fish & Seafood</a>
+        <a href="#">Vendors</a>
+        <a href="#">Login</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <div class="hero-content">
+
+        <h1>Fresh Catch. Local Vendors. Easy Ordering.</h1>
+
+        <p>
+            Welcome to Tinambac Fish Market — an online marketplace
+            connecting customers with fish vendors in Tinambac,
+            Camarines Sur.
+        </p>
+
+        <a href="#" class="button">Browse Fresh Fish</a>
+
+    </div>
+</section>
+
+<section class="section">
+
+    <h2>What You Can Do</h2>
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>🐟 Buy Fresh Fish</h3>
+            <p>
+                Browse fresh fish and seafood products offered
+                by local vendors in Tinambac.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>🏪 Local Vendors</h3>
+            <p>
+                Discover fish vendors and seafood sellers
+                operating within the municipality.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>🛒 Easy Ordering</h3>
+            <p>
+                Place your order online and receive updates
+                about your purchase.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+<section class="section">
+
+    <h2>For Fish Vendors</h2>
+
+    <p>
+        Are you a fish vendor in Tinambac?
+        Join the marketplace and start selling your products online.
+    </p>
+
+    <a href="#" class="button">Become a Vendor</a>
+
+</section>
+
+<footer>
+    <p>© 2023 GMVCC Tinambac</p>
+    <p>Tinambac, Camarines Sur, Philippines</p>
+</footer>
+
+</body>
+</html>
