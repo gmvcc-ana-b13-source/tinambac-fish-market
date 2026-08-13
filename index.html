@@ -234,7 +234,35 @@
         SUPABASE_URL,
         SUPABASE_KEY
     );
+async function testSupabaseConnection() {
 
+    const { data, error } = await supabase
+        .from('categories')
+        .select('id, name')
+        .limit(5);
+
+    if (error) {
+
+        console.error('Supabase connection failed:', error);
+
+        alert(
+            'Supabase connection failed.\n\n' +
+            error.message
+        );
+
+        return;
+    }
+
+    console.log('Supabase connection successful:', data);
+
+    alert(
+        'Supabase connection successful!\n\n' +
+        'Categories found: ' +
+        data.length
+    );
+}
+
+testSupabaseConnection();
 </script>
 
 <script>
