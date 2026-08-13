@@ -1,15 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Tinambac Fish Market</title>
 
+
     <style>
+
         * {
             box-sizing: border-box;
         }
+
 
         body {
             margin: 0;
@@ -18,19 +25,23 @@
             color: #1f2933;
         }
 
+
         header {
             background: #087f8c;
             color: white;
             padding: 18px 30px;
+
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
+
         .logo {
             font-size: 24px;
             font-weight: bold;
         }
+
 
         nav a {
             color: white;
@@ -39,15 +50,19 @@
             font-size: 15px;
         }
 
+
         .hero {
-            background: linear-gradient(
-                rgba(0, 90, 100, 0.75),
-                rgba(0, 90, 100, 0.75)
-            ),
-            url("https://images.unsplash.com/photo-1544943910-4c1dc44aab44?auto=format&fit=crop&w=1600&q=80");
+
+            background:
+                linear-gradient(
+                    rgba(0, 90, 100, 0.75),
+                    rgba(0, 90, 100, 0.75)
+                ),
+                url("https://images.unsplash.com/photo-1544943910-4c1dc44aab44?auto=format&fit=crop&w=1600&q=80");
 
             background-size: cover;
             background-position: center;
+
             min-height: 430px;
 
             display: flex;
@@ -55,238 +70,796 @@
             justify-content: center;
 
             text-align: center;
+
             color: white;
+
             padding: 40px 20px;
         }
+
 
         .hero-content {
             max-width: 800px;
         }
+
 
         .hero h1 {
             font-size: 48px;
             margin-bottom: 15px;
         }
 
+
         .hero p {
             font-size: 20px;
             line-height: 1.6;
         }
 
+
         .button {
+
             display: inline-block;
+
             margin-top: 20px;
+
             padding: 14px 28px;
+
             background: #f4b942;
+
             color: #17202a;
+
             text-decoration: none;
+
             border-radius: 8px;
+
             font-weight: bold;
+
+            border: none;
+
+            cursor: pointer;
         }
 
+
         .section {
+
             padding: 50px 25px;
+
             text-align: center;
         }
 
+
         .section h2 {
+
             color: #087f8c;
+
             font-size: 32px;
         }
 
+
         .cards {
+
             max-width: 1100px;
+
             margin: 30px auto 0;
+
             display: flex;
+
             gap: 20px;
+
             justify-content: center;
+
             flex-wrap: wrap;
         }
 
+
         .card {
+
             background: white;
+
             width: 300px;
+
             padding: 25px;
+
             border-radius: 12px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+
+            box-shadow:
+                0 3px 12px rgba(0,0,0,0.08);
         }
 
+
         .card h3 {
+
             color: #087f8c;
         }
 
-        footer {
-            background: #12343b;
+
+        /* PRODUCTS */
+
+        .products {
+
+            max-width: 1100px;
+
+            margin: 30px auto;
+
+            display: flex;
+
+            gap: 20px;
+
+            justify-content: center;
+
+            flex-wrap: wrap;
+        }
+
+
+        .product-card {
+
+            background: white;
+
+            width: 300px;
+
+            border-radius: 12px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 3px 12px rgba(0,0,0,0.08);
+
+            text-align: left;
+        }
+
+
+        .product-image {
+
+            width: 100%;
+
+            height: 190px;
+
+            object-fit: cover;
+
+            background: #dff3f7;
+        }
+
+
+        .no-image {
+
+            width: 100%;
+
+            height: 190px;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            font-size: 65px;
+
+            background: #dff3f7;
+        }
+
+
+        .product-info {
+
+            padding: 20px;
+        }
+
+
+        .product-info h3 {
+
+            color: #087f8c;
+
+            margin-top: 0;
+        }
+
+
+        .price {
+
+            color: #d88700;
+
+            font-size: 20px;
+
+            font-weight: bold;
+
+            margin: 12px 0;
+        }
+
+
+        .order-btn {
+
+            width: 100%;
+
+            padding: 11px;
+
+            background: #087f8c;
+
             color: white;
+
+            border: none;
+
+            border-radius: 7px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+        }
+
+
+        .order-btn:hover {
+
+            background: #066673;
+        }
+
+
+        .loading {
+
+            width: 100%;
+
             text-align: center;
+
+            padding: 30px;
+
+            color: #666;
+        }
+
+
+        footer {
+
+            background: #12343b;
+
+            color: white;
+
+            text-align: center;
+
             padding: 25px;
+
             margin-top: 30px;
         }
 
+
         @media (max-width: 700px) {
+
             header {
+
                 flex-direction: column;
+
                 gap: 12px;
             }
 
+
             nav a {
+
                 margin: 0 8px;
             }
 
+
             .hero h1 {
+
                 font-size: 34px;
             }
+
         }
+
     </style>
+
 </head>
+
 
 <body>
 
+
 <header>
-    <div class="logo">🐟 Tinambac Fish Market</div>
+
+    <div class="logo">
+        🐟 Tinambac Fish Market
+    </div>
+
 
     <nav>
-        <a href="#">Home</a>
-        <a href="#">Fish & Seafood</a>
-        <a href="#">Vendors</a>
-        <a href="#">Login</a>
+
+        <a href="#home">
+            Home
+        </a>
+
+        <a href="#products">
+            Fish & Seafood
+        </a>
+
+        <a href="#vendors">
+            Vendors
+        </a>
+
+        <a href="#about">
+            About
+        </a>
+
     </nav>
+
 </header>
 
-<section class="hero">
+
+
+<section class="hero" id="home">
+
     <div class="hero-content">
 
-        <h1>Fresh Catch. Local Vendors. Easy Ordering.</h1>
+        <h1>
+            Fresh Catch. Local Vendors. Easy Ordering.
+        </h1>
+
 
         <p>
-            Welcome to Tinambac Fish Market — an online marketplace
-            connecting customers with fish vendors in Tinambac,
-            Camarines Sur.
+
+            Welcome to Tinambac Fish Market —
+            an online marketplace connecting
+            customers with fish vendors in
+            Tinambac, Camarines Sur.
+
         </p>
 
-        <a href="#" class="button">Browse Fresh Fish</a>
+
+        <a
+            href="#products"
+            class="button">
+
+            Browse Fresh Fish
+
+        </a>
 
     </div>
+
 </section>
 
-<section class="section">
 
-    <h2>What You Can Do</h2>
+
+<section class="section" id="about">
+
+    <h2>
+        What You Can Do
+    </h2>
+
 
     <div class="cards">
 
-        <div class="card">
-            <h3>🐟 Buy Fresh Fish</h3>
-            <p>
-                Browse fresh fish and seafood products offered
-                by local vendors in Tinambac.
-            </p>
-        </div>
 
         <div class="card">
-            <h3>🏪 Local Vendors</h3>
+
+            <h3>
+                🐟 Buy Fresh Fish
+            </h3>
+
             <p>
-                Discover fish vendors and seafood sellers
-                operating within the municipality.
+
+                Browse fresh fish and seafood
+                products offered by local vendors
+                in Tinambac.
+
             </p>
+
         </div>
 
+
+
         <div class="card">
-            <h3>🛒 Easy Ordering</h3>
+
+            <h3>
+                🏪 Local Vendors
+            </h3>
+
             <p>
-                Place your order online and receive updates
-                about your purchase.
+
+                Discover fish vendors and seafood
+                sellers operating within Tinambac.
+
             </p>
+
         </div>
+
+
+
+        <div class="card">
+
+            <h3>
+                🛒 Easy Ordering
+            </h3>
+
+            <p>
+
+                Place your order online and receive
+                updates about your purchase.
+
+            </p>
+
+        </div>
+
 
     </div>
 
 </section>
 
-<section class="section">
 
-    <h2>For Fish Vendors</h2>
+
+<!-- REAL PRODUCTS FROM SUPABASE -->
+
+<section
+    class="section"
+    id="products">
+
+
+    <h2>
+        Fresh Fish & Seafood
+    </h2>
+
 
     <p>
-        Are you a fish vendor in Tinambac?
-        Join the marketplace and start selling your products online.
+        Products from participating fish vendors
+        in Tinambac.
     </p>
 
-    <a href="#" class="button">Become a Vendor</a>
+
+    <div
+        class="products"
+        id="product-list">
+
+        <div class="loading">
+
+            Loading fresh fish...
+
+        </div>
+
+    </div>
+
 
 </section>
 
+
+
+<section
+    class="section"
+    id="vendors">
+
+
+    <h2>
+        For Fish Vendors
+    </h2>
+
+
+    <p>
+
+        Are you a fish vendor in Tinambac?
+
+        Join our marketplace and showcase
+        your products online.
+
+    </p>
+
+
+    <button
+        class="button"
+        onclick="vendorRegistration()">
+
+        Become a Vendor
+
+    </button>
+
+
+</section>
+
+
+
 <footer>
-    <p>© 2023 GMVCC Tinambac</p>
-    <p>Tinambac, Camarines Sur, Philippines</p>
+
+    <p>
+        <strong>
+            Tinambac Fish Market
+        </strong>
+    </p>
+
+
+    <p>
+        Tinambac, Camarines Sur, Philippines
+    </p>
+
+
+    <p>
+        © 2026 Tinambac Fish Market
+    </p>
+
 </footer>
 
 
+
+<!-- SUPABASE -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 
 <script>
 
-    const SUPABASE_URL = "https://eyflalxgkqekrebzxxra.supabase.co";
 
-    const SUPABASE_KEY = "sb_publishable_Ha8tHUn1V9aa5OPuZNY8tQ_e8wJWK_b";
+/*
+==================================================
+SUPABASE CONNECTION
+==================================================
+*/
 
-    const supabase = window.supabase.createClient(
+const SUPABASE_URL =
+    "https://eyflalxgkqekrebzxxra.supabase.co";
+
+
+const SUPABASE_KEY =
+    "sb_publishable_Ha8tHUn1V9aa5OPuZNY8tQ_e8wJWK_b";
+
+
+const supabase =
+    window.supabase.createClient(
         SUPABASE_URL,
         SUPABASE_KEY
     );
-async function testSupabaseConnection() {
 
-    const { data, error } = await supabase
-        .from('categories')
-        .select('id, name')
-        .limit(5);
+
+
+/*
+==================================================
+LOAD PRODUCTS
+==================================================
+*/
+
+async function loadProducts() {
+
+
+    const productList =
+        document.getElementById(
+            "product-list"
+        );
+
+
+    const { data, error } =
+        await supabase
+
+            .from("products")
+
+            .select(`
+                id,
+                name,
+                description,
+                price,
+                unit,
+                stock_quantity,
+                image_url,
+                vendor_id
+            `)
+
+            .gt(
+                "stock_quantity",
+                0
+            )
+
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
 
     if (error) {
 
-        console.error('Supabase connection failed:', error);
-
-        alert(
-            'Supabase connection failed.\n\n' +
-            error.message
+        console.error(
+            "Product loading error:",
+            error
         );
+
+
+        productList.innerHTML = `
+
+            <div class="loading">
+
+                Unable to load products.
+
+                <br><br>
+
+                Please try again later.
+
+            </div>
+
+        `;
+
 
         return;
+
     }
 
-    console.log('Supabase connection successful:', data);
 
-    alert(
-        'Supabase connection successful!\n\n' +
-        'Categories found: ' +
-        data.length
+    if (
+        !data ||
+        data.length === 0
+    ) {
+
+        productList.innerHTML = `
+
+            <div class="loading">
+
+                No fresh fish products
+                are currently available.
+
+                <br><br>
+
+                Check back soon!
+
+            </div>
+
+        `;
+
+
+        return;
+
+    }
+
+
+    productList.innerHTML = "";
+
+
+    data.forEach(
+        function(product) {
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "product-card";
+
+
+            let imageHTML;
+
+
+            if (
+                product.image_url
+            ) {
+
+                imageHTML = `
+
+                    <img
+                        class="product-image"
+                        src="${product.image_url}"
+                        alt="${product.name}"
+                    >
+
+                `;
+
+            } else {
+
+                imageHTML = `
+
+                    <div class="no-image">
+
+                        🐟
+
+                    </div>
+
+                `;
+
+            }
+
+
+            card.innerHTML = `
+
+                ${imageHTML}
+
+                <div class="product-info">
+
+                    <h3>
+                        ${product.name}
+                    </h3>
+
+                    <p>
+                        ${
+                            product.description
+                            || "Fresh seafood product."
+                        }
+                    </p>
+
+                    <div class="price">
+
+                        ₱${Number(
+                            product.price
+                        ).toFixed(2)}
+
+                        / ${product.unit}
+
+                    </div>
+
+                    <p>
+
+                        Available:
+                        ${product.stock_quantity}
+
+                        ${product.unit}
+
+                    </p>
+
+
+                    <button
+                        class="order-btn"
+                        onclick="orderProduct(
+                            '${product.id}'
+                        )">
+
+                        Order Now
+
+                    </button>
+
+                </div>
+
+            `;
+
+
+            productList.appendChild(
+                card
+            );
+
+        }
     );
+
 }
 
-testSupabaseConnection();
+
+
+/*
+==================================================
+ORDER BUTTON
+==================================================
+*/
+
+function orderProduct(
+    productId
+) {
+
+    alert(
+
+        "Product selected: "
+        + productId
+        + "\n\n"
+        + "Customer login and shopping cart "
+        + "will be added next."
+
+    );
+
+}
+
+
+
+/*
+==================================================
+VENDOR REGISTRATION
+==================================================
+*/
+
+function vendorRegistration() {
+
+    alert(
+
+        "Vendor registration will be available soon."
+
+    );
+
+}
+
+
+
+/*
+==================================================
+START
+==================================================
+*/
+
+loadProducts();
+
+
 </script>
 
-<script>
-
-    function orderProduct(productName) {
-
-        alert(
-            "You selected: " +
-            productName +
-            "\n\nOur online ordering system will allow you to continue with your order once you sign in."
-        );
-
-    }
-
-
-    function vendorRegistration() {
-
-        alert(
-            "Vendor registration will be available soon."
-        );
-
-    }
-
-</script>
 
 </body>
+
 </html>
