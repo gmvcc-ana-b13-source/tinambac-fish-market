@@ -1,1061 +1,331 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Tinambac Fish Market</title>
-
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tinambac Fish Market - Online Ordering</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-
-        * {
-            box-sizing: border-box;
+        :root {
+            --primary: #0077b6;
+            --primary-dark: #023e8a;
+            --accent: #00b4d8;
+            --light-bg: #f8f9fa;
+            --dark-text: #212529;
+            --card-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f8fa;
-            color: #1f2933;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--light-bg); color: var(--dark-text); line-height: 1.6; }
 
         header {
-            background: #087f8c;
+            background-color: var(--primary-dark);
             color: white;
-            padding: 18px 30px;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
+        header .logo { font-size: 1.5rem; font-weight: bold; }
+        nav a { color: white; text-decoration: none; margin-left: 1.5rem; font-weight: 500; }
+        nav a:hover { color: var(--accent); }
+
+        .cart-bar {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.75rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-
-        .logo {
-            font-size: 24px;
+        .cart-btn {
+            background-color: #ffb703;
+            color: #000;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
             font-weight: bold;
         }
-
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin-left: 20px;
-            font-size: 15px;
-        }
-
 
         .hero {
-
-            background:
-                linear-gradient(
-                    rgba(0, 90, 100, 0.75),
-                    rgba(0, 90, 100, 0.75)
-                ),
-                url("https://images.unsplash.com/photo-1544943910-4c1dc44aab44?auto=format&fit=crop&w=1600&q=80");
-
+            background: linear-gradient(rgba(2, 62, 138, 0.8), rgba(0, 119, 182, 0.8)), url('https://images.unsplash.com/photo-1534483509719-3feaee7c30da?auto=format&fit=crop&w=1200&q=80');
             background-size: cover;
             background-position: center;
-
-            min-height: 430px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            text-align: center;
-
             color: white;
-
-            padding: 40px 20px;
-        }
-
-
-        .hero-content {
-            max-width: 800px;
-        }
-
-
-        .hero h1 {
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
-
-
-        .hero p {
-            font-size: 20px;
-            line-height: 1.6;
-        }
-
-
-        .button {
-
-            display: inline-block;
-
-            margin-top: 20px;
-
-            padding: 14px 28px;
-
-            background: #f4b942;
-
-            color: #17202a;
-
-            text-decoration: none;
-
-            border-radius: 8px;
-
-            font-weight: bold;
-
-            border: none;
-
-            cursor: pointer;
-        }
-
-
-        .section {
-
-            padding: 50px 25px;
-
             text-align: center;
+            padding: 4rem 1rem;
         }
 
+        .hero h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+        .hero p { font-size: 1.2rem; max-width: 600px; margin: 0 auto 1.5rem; }
 
-        .section h2 {
+        .section-container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
+        .section-title { font-size: 1.8rem; color: var(--primary-dark); margin-bottom: 1rem; border-bottom: 2px solid var(--accent); display: inline-block; padding-bottom: 0.25rem; }
 
-            color: #087f8c;
-
-            font-size: 32px;
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
         }
-
-
-        .cards {
-
-            max-width: 1100px;
-
-            margin: 30px auto 0;
-
-            display: flex;
-
-            gap: 20px;
-
-            justify-content: center;
-
-            flex-wrap: wrap;
-        }
-
-
-        .card {
-
-            background: white;
-
-            width: 300px;
-
-            padding: 25px;
-
-            border-radius: 12px;
-
-            box-shadow:
-                0 3px 12px rgba(0,0,0,0.08);
-        }
-
-
-        .card h3 {
-
-            color: #087f8c;
-        }
-
-
-        /* PRODUCTS */
-
-        .products {
-
-            max-width: 1100px;
-
-            margin: 30px auto;
-
-            display: flex;
-
-            gap: 20px;
-
-            justify-content: center;
-
-            flex-wrap: wrap;
-        }
-
 
         .product-card {
-
             background: white;
-
-            width: 300px;
-
-            border-radius: 12px;
-
+            border-radius: 8px;
             overflow: hidden;
-
-            box-shadow:
-                0 3px 12px rgba(0,0,0,0.08);
-
-            text-align: left;
-        }
-
-
-        .product-image {
-
-            width: 100%;
-
-            height: 190px;
-
-            object-fit: cover;
-
-            background: #dff3f7;
-        }
-
-
-        .no-image {
-
-            width: 100%;
-
-            height: 190px;
-
+            box-shadow: var(--card-shadow);
             display: flex;
-
-            justify-content: center;
-
-            align-items: center;
-
-            font-size: 65px;
-
-            background: #dff3f7;
+            flex-direction: column;
         }
 
-
-        .product-info {
-
-            padding: 20px;
-        }
-
-
-        .product-info h3 {
-
-            color: #087f8c;
-
-            margin-top: 0;
-        }
-
-
-        .price {
-
-            color: #d88700;
-
-            font-size: 20px;
-
-            font-weight: bold;
-
-            margin: 12px 0;
-        }
-
-
-        .order-btn {
-
-            width: 100%;
-
-            padding: 11px;
-
-            background: #087f8c;
-
+        .product-card img { width: 100%; height: 180px; object-fit: cover; }
+        .product-details { padding: 1rem; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .product-title { font-size: 1.2rem; margin-bottom: 0.5rem; }
+        .vendor-name { font-size: 0.85rem; color: #6c757d; margin-bottom: 0.5rem; }
+        .product-price { font-size: 1.1rem; font-weight: bold; color: var(--primary); margin-bottom: 1rem; }
+        .add-cart-btn {
+            background-color: var(--primary);
             color: white;
-
             border: none;
-
-            border-radius: 7px;
-
+            padding: 0.5rem;
+            border-radius: 4px;
             cursor: pointer;
-
-            font-weight: bold;
-        }
-
-
-        .order-btn:hover {
-
-            background: #066673;
-        }
-
-
-        .loading {
-
             width: 100%;
-
-            text-align: center;
-
-            padding: 30px;
-
-            color: #666;
+            font-weight: 500;
         }
 
+        .add-cart-btn:hover { background-color: var(--primary-dark); }
 
-        footer {
-
-            background: #12343b;
-
-            color: white;
-
-            text-align: center;
-
-            padding: 25px;
-
-            margin-top: 30px;
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
 
-
-        @media (max-width: 700px) {
-
-            header {
-
-                flex-direction: column;
-
-                gap: 12px;
-            }
-
-
-            nav a {
-
-                margin: 0 8px;
-            }
-
-
-            .hero h1 {
-
-                font-size: 34px;
-            }
-
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.25rem; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
+        .close-btn { background: #dc3545; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; float: right; }
+
+        footer { background: var(--primary-dark); color: white; text-align: center; padding: 1.5rem; margin-top: 3rem; }
     </style>
-
 </head>
-
-
 <body>
 
-
 <header>
-
-    <div class="logo">
-        🐟 Tinambac Fish Market
-    </div>
-
-
+    <div class="logo">🐟 Tinambac Fish Market</div>
     <nav>
-
-        <a href="#home">
-            Home
-        </a>
-
-        <a href="#products">
-            Fish & Seafood
-        </a>
-
-        <a href="#vendors">
-            Vendors
-        </a>
-
-        <a href="#about">
-            About
-        </a>
-
+        <a href="#home">Home</a>
+        <a href="#products">Fish & Seafood</a>
+        <a href="#vendors">Vendors</a>
     </nav>
-
 </header>
 
-<div
-    id="cart-bar"
-    style="
-        background:#ffffff;
-        padding:15px 25px;
-        text-align:right;
-        box-shadow:0 2px 8px rgba(0,0,0,0.08);
-        position:sticky;
-        top:0;
-        z-index:100;
-    ">
-
-    🛒 Cart:
-    <strong id="cart-count">0</strong>
-    item(s)
-
-    <button
-        onclick="showCart()"
-        style="
-            margin-left:10px;
-            padding:8px 15px;
-            border:none;
-            border-radius:6px;
-            background:#087f8c;
-            color:white;
-            cursor:pointer;
-        ">
-
-        View Cart
-
-    </button>
-
+<div class="cart-bar">
+    <div>Direct Market Delivery across Tinambac, Camarines Sur</div>
+    <button class="cart-btn" onclick="openCart()">🛒 Cart (<span id="cart-count">0</span>)</button>
 </div>
-
 
 <section class="hero" id="home">
+    <h1>Fresh Catch. Local Vendors. Easy Ordering.</h1>
+    <p>Welcome to Tinambac Fish Market — connecting local fishermen and fish vendors directly with customers.</p>
+</section>
 
-    <div class="hero-content">
-
-        <h1>
-            Fresh Catch. Local Vendors. Easy Ordering.
-        </h1>
-
-
-        <p>
-
-            Welcome to Tinambac Fish Market —
-            an online marketplace connecting
-            customers with fish vendors in
-            Tinambac, Camarines Sur.
-
-        </p>
-
-
-        <a
-            href="#products"
-            class="button">
-
-            Browse Fresh Fish
-
-        </a>
-
+<div class="section-container" id="products">
+    <h2 class="section-title">Fresh Catch Available Today</h2>
+    <div id="product-grid" class="product-grid">
+        <div>Loading fresh fish from Tinambac vendors...</div>
     </div>
-
-</section>
-
-
-
-<section class="section" id="about">
-
-    <h2>
-        What You Can Do
-    </h2>
-
-
-    <div class="cards">
-
-
-        <div class="card">
-
-            <h3>
-                🐟 Buy Fresh Fish
-            </h3>
-
-            <p>
-
-                Browse fresh fish and seafood
-                products offered by local vendors
-                in Tinambac.
-
-            </p>
-
-        </div>
-
-
-
-        <div class="card">
-
-            <h3>
-                🏪 Local Vendors
-            </h3>
-
-            <p>
-
-                Discover fish vendors and seafood
-                sellers operating within Tinambac.
-
-            </p>
-
-        </div>
-
-
-
-        <div class="card">
-
-            <h3>
-                🛒 Easy Ordering
-            </h3>
-
-            <p>
-
-                Place your order online and receive
-                updates about your purchase.
-
-            </p>
-
-        </div>
-
-
-    </div>
-
-</section>
-
-
-
-<!-- REAL PRODUCTS FROM SUPABASE -->
-
-<section
-    class="section"
-    id="products">
-
-
-    <h2>
-        Fresh Fish & Seafood
-    </h2>
-
-
-    <p>
-        Products from participating fish vendors
-        in Tinambac.
-    </p>
-
-
-    <div
-        class="products"
-        id="product-list">
-
-        <div class="loading">
-
-            Loading fresh fish...
-
-        </div>
-
-    </div>
-
-
-</section>
-
-
-
-<section
-    class="section"
-    id="vendors">
-
-
-    <h2>
-        For Fish Vendors
-    </h2>
-
-
-    <p>
-
-        Are you a fish vendor in Tinambac?
-
-        Join our marketplace and showcase
-        your products online.
-
-    </p>
-
-
-    <button
-        class="button"
-        onclick="vendorRegistration()">
-
-        Become a Vendor
-
-    </button>
-
-
-</section>
-
-
-
-<footer>
-
-    <p>
-        <strong>
-            Tinambac Fish Market
-        </strong>
-    </p>
-
-
-    <p>
-        Tinambac, Camarines Sur, Philippines
-    </p>
-
-
-    <p>
-        © 2026 Tinambac Fish Market
-    </p>
-
-</footer>
-
-
-
-<!-- SUPABASE -->
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-
-const SUPABASE_URL =
-    "https://eyflalxgkqekrebzxxra.supabase.co";
-
-const SUPABASE_KEY =
-    "sb_publishable_Ha8tHUn1V9aa5OPuZNY8tQ_e8wJWK_b";
-
-
-const supabaseClient =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-    );
-
-
-async function loadProducts() {
-
-    const productList =
-        document.getElementById("product-list");
-
-
-    productList.innerHTML = `
-        <div class="loading">
-            Loading fresh fish...
-        </div>
-    `;
-
-
-    const { data, error } =
-        await supabaseClient
-
-            .from("products")
-
-            .select(`
-            id,
-            name,
-            description,
-            price,
-            unit,
-            stock_quantity,
-            image_url,
-            vendor_id,
-            vendors (
-                business_name,
-                selling_location,
-                barangay,
-                municipality
-            )
-        `)
-
-            .gt(
-                "stock_quantity",
-                0
-            )
-
-            .order(
-                "created_at",
-                {
-                    ascending: false
-                }
-            );
-
-
-    if (error) {
-
-        console.error(
-            "Product loading error:",
-            error
-        );
-
-
-        productList.innerHTML = `
-            <div class="loading">
-                Unable to load products.
-                <br><br>
-                Please try again later.
-            </div>
-        `;
-
-        return;
-    }
-
-
-    if (
-        !data ||
-        data.length === 0
-    ) {
-
-        productList.innerHTML = `
-            <div class="loading">
-                No fresh fish products
-                are currently available.
-                <br><br>
-                Check back soon!
-            </div>
-        `;
-
-        return;
-    }
-
-
-    productList.innerHTML = "";
-
-
-    data.forEach(function(product) {
-
-        const card =
-            document.createElement("div");
-
-
-        card.className =
-            "product-card";
-
-
-        let imageHTML;
-
-
-        if (product.image_url) {
-
-            imageHTML = `
-                <img
-                    class="product-image"
-                    src="${product.image_url}"
-                    alt="${product.name}"
-                >
-            `;
-
-        } else {
-
-            imageHTML = `
-                <div class="no-image">
-                    🐟
-                </div>
-            `;
-
-        }
-
-
-        card.innerHTML = `
-
-            ${imageHTML}
-
-            <div class="product-info">
-
-                <h3>
-                    ${product.name}
-                </h3>
-
-                <p>
-                    ${
-                        product.description ||
-                        "Fresh seafood product."
-                    }
-                </p>
-
-                <div class="price">
-
-                    ₱${Number(
-                        product.price
-                    ).toFixed(2)}
-
-                    / ${product.unit}
-
-                </div>
-
-                <p>
-                    Available:
-                    ${product.stock_quantity}
-                    ${product.unit}
-                </p>
-                <div style="margin: 10px 0; color: #555;">
-
-    <strong>
-        🏪
-        ${
-            product.vendors
-                ? product.vendors.business_name
-                : "Local Fish Vendor"
-        }
-    </strong>
-
-    <br>
-
-    <span>
-        📍
-        ${
-            product.vendors
-                ? (
-                    product.vendors.selling_location ||
-                    product.vendors.barangay ||
-                    product.vendors.municipality ||
-                    "Tinambac, Camarines Sur"
-                )
-                : "Tinambac, Camarines Sur"
-        }
-    </span>
-
 </div>
 
-             <button
-    class="order-btn"
-    onclick="addToCart('${product.id}')">
-
-    Add to Cart
-
-        </button>
-        
+<!-- Checkout Modal -->
+<div id="cart-modal" class="modal">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeCart()">X</button>
+        <h2>Your Shopping Cart</h2>
+        <div id="cart-items" style="margin: 1rem 0;"></div>
+        <p><strong>Total: ₱<span id="cart-total">0.00</span></strong></p>
+        <hr style="margin: 1rem 0;">
+        <h3>Customer Details</h3>
+        <form id="checkout-form" onsubmit="submitOrder(event)">
+            <div class="form-group">
+                <label for="cust-name">Full Name</label>
+                <input type="text" id="cust-name" required placeholder="Juan Dela Cruz">
             </div>
+            <div class="form-group">
+                <label for="cust-phone">Contact Number</label>
+                <input type="tel" id="cust-phone" required placeholder="09123456789">
+            </div>
+            <div class="form-group">
+                <label for="cust-barangay">Barangay (Tinambac)</label>
+                <select id="cust-barangay" required>
+                    <option value="">Select Barangay</option>
+                    <option value="Bagsik">Bagsik</option>
+                    <option value="Balaogan">Balaogan</option>
+                    <option value="Bulaabol">Bulaabol</option>
+                    <option value="Cawayan">Cawayan</option>
+                    <option value="Firmeza">Firmeza</option>
+                    <option value="Lalawigan">Lalawigan</option>
+                    <option value="Poblacion">Poblacion</option>
+                    <option value="San Pascual">San Pascual</option>
+                    <option value="Sipaco">Sipaco</option>
+                </select>
+            </div>
+            <button type="submit" class="add-cart-btn" style="background-color: #28a745; margin-top: 1rem;">Confirm & Place Order</button>
+        </form>
+    </div>
+</div>
 
-        `;
+<footer>
+    <p><strong>Tinambac Fish Market</strong></p>
+    <p>Tinambac, Camarines Sur, Philippines</p>
+</footer>
 
+<script>
+    // 1. Initialize Supabase Client
+    // Replace YOUR_SUPABASE_ANON_KEY with your project's anon key from settings/general -> API
+    const SUPABASE_URL = 'https://eyflalxgkqekrebzxxra.supabase.co';
+    const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        productList.appendChild(card);
+    let cart = [];
 
-    });
+    // 2. Fetch & Render Available Products
+    async function fetchProducts() {
+        const grid = document.getElementById('product-grid');
+        try {
+            const { data: products, error } = await supabase
+                .from('products')
+                .select('*, vendors(vendor_name, stall_number)')
+                .eq('is_available', true);
 
-}
+            if (error) throw error;
 
+            if (!products || products.length === 0) {
+                grid.innerHTML = '<p>No fresh fish listed at the moment. Please check back later!</p>';
+                return;
+            }
 
-let shoppingCart = [];
+            grid.innerHTML = products.map(p => `
+                <div class="product-card">
+                    <img src="${p.image_url || 'https://via.placeholder.com/300x200?text=Fresh+Fish'}" alt="${p.name}">
+                    <div class="product-details">
+                        <div class="product-title">${p.name}</div>
+                        <div class="vendor-name">Vendor: ${p.vendors ? p.vendors.vendor_name : 'Tinambac Vendor'} (Stall ${p.vendors ? p.vendors.stall_number : 'N/A'})</div>
+                        <div class="product-price">₱${parseFloat(p.price_per_kg).toFixed(2)} / kg</div>
+                        <button class="add-cart-btn" onclick="addToCart('${p.id}', '${p.name}', ${p.price_per_kg})">Add to Order</button>
+                    </div>
+                </div>
+            `).join('');
 
-
-async function addToCart(productId) {
-
-    const { data: product, error } =
-        await supabaseClient
-
-            .from("products")
-
-            .select(`
-                id,
-                name,
-                description,
-                price,
-                unit,
-                stock_quantity,
-                image_url,
-                vendor_id,
-                vendors (
-                    business_name,
-                    selling_location,
-                    barangay,
-                    municipality
-                )
-            `)
-
-            .eq("id", productId)
-
-            .single();
-
-
-    if (error) {
-
-        console.error(
-            "Unable to get product:",
-            error
-        );
-
-        alert(
-            "Unable to add this product to your cart."
-        );
-
-        return;
-    }
-
-
-    if (
-        !product ||
-        product.stock_quantity <= 0
-    ) {
-
-        alert(
-            "This product is currently out of stock."
-        );
-
-        return;
-    }
-
-function updateCartDisplay() {
-
-    const cartCount =
-        document.getElementById(
-            "cart-count"
-        );
-
-
-    const totalItems =
-        shoppingCart.reduce(
-            function(total, item) {
-
-                return total + item.quantity;
-
-            },
-            0
-        );
-
-
-    cartCount.textContent =
-        totalItems;
-
-}
-    function showCart() {
-
-    if (
-        shoppingCart.length === 0
-    ) {
-
-        alert(
-            "Your shopping cart is empty."
-        );
-
-        return;
-    }
-
-
-    let message =
-        "YOUR SHOPPING CART\n\n";
-
-
-    let total = 0;
-
-
-    shoppingCart.forEach(
-        function(item) {
-
-            message +=
-                item.product_name +
-                "\n" +
-                item.quantity +
-                " " +
-                item.unit +
-                " × ₱" +
-                item.unit_price.toFixed(2) +
-                " = ₱" +
-                item.subtotal.toFixed(2) +
-                "\n\n";
-
-
-            total +=
-                item.subtotal;
-
+        } catch (err) {
+            console.error('Error loading products:', err);
+            grid.innerHTML = '<p>Unable to load products. Please check database permissions or try again later.</p>';
         }
-    );
+    }
 
+    // 3. Cart Functions
+    function addToCart(id, name, price) {
+        const existing = cart.find(item => item.id === id);
+        if (existing) {
+            existing.qty += 1;
+        } else {
+            cart.push({ id, name, price, qty: 1 });
+        }
+        updateCartUI();
+    }
 
-    message +=
-        "TOTAL: ₱" +
-        total.toFixed(2);
+    function updateCartUI() {
+        const totalItems = cart.reduce((acc, item) => acc + item.qty, 0);
+        document.getElementById('cart-count').innerText = totalItems;
 
+        const cartItemsDiv = document.getElementById('cart-items');
+        let totalAmount = 0;
 
-    alert(message);
+        if (cart.length === 0) {
+            cartItemsDiv.innerHTML = '<p>Your cart is empty.</p>';
+        } else {
+            cartItemsDiv.innerHTML = cart.map(item => {
+                const itemTotal = item.price * item.qty;
+                totalAmount += itemTotal;
+                return `<div>${item.name} - ${item.qty} kg x ₱${item.price} = <strong>₱${itemTotal.toFixed(2)}</strong></div>`;
+            }).join('');
+        }
 
-}
-    const existingItem =
-        shoppingCart.find(
-            item =>
-                item.product_id === product.id
-        );
+        document.getElementById('cart-total').innerText = totalAmount.toFixed(2);
+    }
 
+    function openCart() { document.getElementById('cart-modal').style.display = 'flex'; }
+    function closeCart() { document.getElementById('cart-modal').style.display = 'none'; }
 
-    if (existingItem) {
-
-        if (
-            existingItem.quantity
-            >= product.stock_quantity
-        ) {
-
-            alert(
-                "You have reached the available stock."
-            );
-
+    // 4. Submit Order to Supabase
+    async function submitOrder(e) {
+        e.preventDefault();
+        if (cart.length === 0) {
+            alert('Your cart is empty!');
             return;
         }
 
+        const name = document.getElementById('cust-name').value;
+        const phone = document.getElementById('cust-phone').value;
+        const barangay = document.getElementById('cust-barangay').value;
+        const total = parseFloat(document.getElementById('cart-total').innerText);
 
-        existingItem.quantity += 1;
+        try {
+            // Insert Main Order
+            const { data: order, error: orderErr } = await supabase
+                .from('orders')
+                .insert([{ customer_name: name, customer_phone: phone, barangay: barangay, total_amount: total }])
+                .select()
+                .single();
 
+            if (orderErr) throw orderErr;
 
-        existingItem.subtotal =
-            existingItem.quantity *
-            existingItem.unit_price;
+            // Insert Order Items
+            const itemsToInsert = cart.map(item => ({
+                order_id: order.id,
+                product_id: item.id,
+                quantity_kg: item.qty,
+                price_at_time: item.price
+            }));
 
-    } else {
+            const { error: itemErr } = await supabase.from('order_items').insert(itemsToInsert);
+            if (itemErr) throw itemErr;
 
-        shoppingCart.push({
+            alert('Order placed successfully! Vendors will process your order shortly.');
+            cart = [];
+            updateCartUI();
+            closeCart();
 
-            product_id:
-                product.id,
-
-            product_name:
-                product.name,
-
-            unit:
-                product.unit,
-
-            unit_price:
-                Number(product.price),
-
-            quantity:
-                1,
-
-            subtotal:
-                Number(product.price),
-
-            vendor_id:
-                product.vendor_id,
-
-            vendor_name:
-                product.vendors
-                    ? product.vendors.business_name
-                    : "Local Fish Vendor"
-
-        });
-
+        } catch (err) {
+            console.error('Order Submission Error:', err);
+            alert('Failed to place order. Please check connection/permissions.');
+        }
     }
 
-
-    updateCartDisplay();
-
-
-    alert(
-        product.name +
-        " has been added to your cart."
-    );
-
-}
-    {
-
-    alert(
-        "Product selected: " +
-        productId +
-        "\n\n" +
-        "Customer login and shopping cart " +
-        "will be added next."
-    );
-
-}
-
-
-function vendorRegistration() {
-
-    alert(
-        "Vendor registration will be available soon."
-    );
-
-}
-
-
-loadProducts();
-
+    // Initialize on page load
+    window.onload = fetchProducts;
 </script>
-    
 </body>
-
 </html>
