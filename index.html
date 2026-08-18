@@ -3,177 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tinambac Fish Market - Online Ordering System</title>
-    <!-- Supabase JS Client -->
+    <title>Tinambac Market Online - Online Ordering System</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --primary: #0077b6;
-            --primary-dark: #023e8a;
-            --accent: #00b4d8;
-            --bg: #f4f6f8;
-            --text: #1d2d44;
+            --header-bg: #003e7e;
+            --sub-bg: #007bb6;
+            --accent-yellow: #ffc107;
+            --bg-light: #f4f6f9;
+            --text-dark: #212529;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); line-height: 1.6; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-dark); line-height: 1.5; }
 
         header {
-            background-color: var(--primary-dark);
+            background-color: var(--header-bg);
             color: white;
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
         }
 
-        .cart-bar {
-            background-color: var(--primary);
+        header h1 { font-size: 1.5rem; font-weight: bold; }
+        .auth-controls button { background: transparent; border: 1px solid white; color: white; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; margin-left: 0.5rem; font-weight: 600; }
+        .auth-controls button:hover { background: white; color: var(--header-bg); }
+
+        .sub-header {
+            background-color: var(--sub-bg);
             color: white;
-            padding: 0.75rem 2rem;
+            padding: 0.8rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .btn-cart {
-            background-color: #ffb703;
+        .cart-btn {
+            background-color: var(--accent-yellow);
             color: #000;
             border: none;
-            padding: 0.5rem 1.2rem;
+            padding: 0.5rem 1rem;
             border-radius: 4px;
             font-weight: bold;
             cursor: pointer;
         }
 
-        .container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
+        .main-content { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
 
-        /* Filter Tabs */
-        .category-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; overflow-x: auto; padding-bottom: 0.5rem; }
-        .tab-btn {
-            background: #e0e1dd;
+        .section-title { font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; color: #111; }
+
+        .category-tabs { display: flex; gap: 0.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
+        .category-btn {
+            background: #0077b6;
+            color: white;
             border: none;
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 1.2rem;
             border-radius: 20px;
+            font-weight: bold;
             cursor: pointer;
-            font-weight: 600;
-            white-space: nowrap;
         }
-        .tab-btn.active { background: var(--primary); color: white; }
+        .category-btn.active { background: #002b5b; }
 
-        /* Product Grid */
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
-        .card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.08); display: flex; flex-direction: column; }
-        .card img { width: 100%; height: 180px; object-fit: cover; background-color: #e9ecef; }
+        .product-card { background: white; border-radius: 8px; border: 1px solid #e0e0e0; overflow: hidden; display: flex; flex-direction: column; }
+        .product-card img { width: 100%; height: 180px; object-fit: cover; background: #eee; }
         .card-body { padding: 1rem; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .card-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 0.25rem; }
-        .vendor-tag { font-size: 0.85rem; color: #6c757d; margin-bottom: 0.5rem; }
-        .price { font-size: 1.1rem; color: var(--primary); font-weight: bold; margin-bottom: 1rem; }
+        .product-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 0.25rem; }
+        .vendor-info { font-size: 0.85rem; color: #666; margin-bottom: 0.5rem; }
+        .product-price { font-size: 1.1rem; font-weight: bold; color: #0077b6; margin-bottom: 1rem; }
 
-        .btn-add { background: var(--primary); color: white; border: none; padding: 0.6rem; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
-        .btn-add:hover { background: var(--primary-dark); }
+        .btn-action { background-color: #0077b6; color: white; border: none; padding: 0.6rem; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; }
+        .btn-action:hover { background-color: #005689; }
 
-        /* Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-body { background: white; padding: 2rem; border-radius: 8px; width: 95%; max-width: 550px; max-height: 90vh; overflow-y: auto; }
+        /* Modal Windows */
+        .modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-box { background: white; padding: 2rem; border-radius: 8px; width: 95%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
         .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; font-weight: bold; margin-bottom: 0.25rem; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 0.3rem; }
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
-        .close-btn { background: #dc3545; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; float: right; cursor: pointer; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .close-modal { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <header>
-    <h2>🐟 Tinambac Market Online</h2>
+    <h1>🐟 Tinambac Market Online</h1>
+    <div class="auth-controls" id="auth-controls">
+        <button onclick="openModal('login-modal')">Login / Sign Up</button>
+    </div>
 </header>
 
-<div class="cart-bar">
+<div class="sub-header">
     <span>Fresh fish directly from local vendors in Tinambac, Camarines Sur</span>
-    <button class="btn-cart" onclick="openCartModal()">🛒 Cart (<span id="cart-count">0</span>)</button>
+    <button class="cart-btn" onclick="openModal('cart-modal')">🛒 Cart (<span id="cart-count">0</span>)</button>
 </div>
 
-<div class="container">
-    <h3 style="margin-bottom: 1rem;">Browse Categories</h3>
-    <div id="category-tabs" class="category-tabs">
-        <button class="tab-btn active" onclick="filterCategory('all')">All Products</button>
+<main class="main-content">
+    <h2 class="section-title">Browse Categories</h2>
+    <div class="category-tabs" id="category-tabs">
+        <button class="category-btn active" onclick="filterProducts('all')">All Products</button>
     </div>
 
-    <h3 style="margin-bottom: 1rem;">Available Fresh Products</h3>
-    <div id="product-grid" class="product-grid">
+    <h2 class="section-title">Available Fresh Products</h2>
+    <div class="product-grid" id="product-grid">
         <p>Loading catalog from database...</p>
     </div>
-</div>
+</main>
 
-<!-- Order Modal -->
-<div id="cart-modal" class="modal">
-    <div class="modal-body">
-        <button class="close-btn" onclick="closeCartModal()">✕</button>
-        <h3>Checkout & Delivery Details</h3>
-        
-        <div id="cart-summary" style="margin: 1rem 0; padding: 1rem; background: #e9ecef; border-radius: 4px;"></div>
-        
-        <form id="checkout-form" onsubmit="handleCheckout(event)">
+<!-- Cart & Checkout Modal -->
+<div class="modal-overlay" id="cart-modal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Your Order Cart</h3>
+            <button class="close-modal" onclick="closeModal('cart-modal')">&times;</button>
+        </div>
+        <div id="cart-items-list" style="margin-bottom: 1rem;"></div>
+        <hr style="margin-bottom: 1rem;">
+        <h4>Delivery Information</h4>
+        <form onsubmit="handleCheckout(event)">
             <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" id="cust-name" required placeholder="Ana Boriga">
+                <label>Customer Name</label>
+                <input type="text" id="cust-name" required placeholder="e.g. Ana Boriga">
             </div>
             <div class="form-group">
-                <label>Contact Number</label>
+                <label>Contact Phone Number</label>
                 <input type="tel" id="cust-phone" required placeholder="09123456789">
             </div>
             <div class="form-group">
-                <label>Barangay</label>
-                <input type="text" id="cust-barangay" required placeholder="Poblacion, Tinambac">
+                <label>Barangay (Tinambac)</label>
+                <input type="text" id="cust-barangay" required placeholder="e.g. Poblacion">
             </div>
             <div class="form-group">
-                <label>Detailed Delivery Address / Landmark</label>
-                <textarea id="cust-address" rows="2" required placeholder="Near Plaza / Stall Area"></textarea>
+                <label>Delivery Address / Specific Stall</label>
+                <textarea id="cust-address" rows="2" required placeholder="Detailed location / landmark"></textarea>
             </div>
+            <button type="submit" class="btn-action" style="background:#28a745;">Place Order Now</button>
+        </form>
+    </div>
+</div>
+
+<!-- Login / Account Modal -->
+<div class="modal-overlay" id="login-modal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Account Access</h3>
+            <button class="close-modal" onclick="closeModal('login-modal')">&times;</button>
+        </div>
+        <form onsubmit="handleAuth(event)">
             <div class="form-group">
-                <label>Payment Method</label>
-                <select id="payment-method" required>
-                    <option value="cash_on_delivery">Cash on Delivery (COD)</option>
-                    <option value="gcash">GCash Transfer</option>
+                <label>Account Type</label>
+                <select id="user-role">
+                    <option value="customer">Customer</option>
+                    <option value="vendor">Vendor / Seller</option>
                 </select>
             </div>
-            <button type="submit" class="btn-add" style="background-color: #28a745;">Submit Order</button>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="auth-email" required placeholder="user@example.com">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="auth-password" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn-action">Login / Register</button>
         </form>
     </div>
 </div>
 
 <script>
-    // Initialize Supabase Client
+    // 1. Initialize Supabase Client
     const SUPABASE_URL = 'https://eyflalxgkqekrebzxxra.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_Ha8tHUn1V9aa5OPuZNY8tQ_e8wJWK_b'; 
+    const SUPABASE_KEY = 'sb_publishable_Ha8tHUn1V9aa5OPuZNY8tQ_e8wJWK_b'; // Replace with your anon key from Supabase Dashboard -> Settings -> API
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let allProducts = [];
     let cart = [];
 
-    async function loadData() {
-        await fetchCategories();
-        await fetchProducts();
-    }
+    // 2. Initialize Page
+    document.addEventListener('DOMContentLoaded', () => {
+        loadCategories();
+        loadProducts();
+    });
 
-    async function fetchCategories() {
+    // 3. Fetch Categories from Supabase
+    async function loadCategories() {
         const { data, error } = await supabase.from('categories').select('*');
         if (!error && data) {
-            const tabs = document.getElementById('category-tabs');
-            data.forEach(c => {
+            const container = document.getElementById('category-tabs');
+            data.forEach(cat => {
                 const btn = document.createElement('button');
-                btn.className = 'tab-btn';
-                btn.innerText = c.name;
-                btn.onclick = () => filterCategory(c.id);
-                tabs.appendChild(btn);
+                btn.className = 'category-btn';
+                btn.innerText = cat.name;
+                btn.onclick = () => filterProducts(cat.id);
+                container.appendChild(btn);
             });
         }
     }
 
-    async function fetchProducts() {
+    // 4. Fetch Products from Supabase
+    async function loadProducts() {
+        const grid = document.getElementById('product-grid');
         const { data, error } = await supabase
             .from('products')
             .select('*, vendors(store_name, stall_number)')
@@ -181,82 +212,85 @@
 
         if (error) {
             console.error(error);
-            document.getElementById('product-grid').innerHTML = '<p>Error loading products.</p>';
+            grid.innerHTML = '<p>Error connecting to Supabase database. Please verify API key and permissions.</p>';
             return;
         }
 
         allProducts = data || [];
-        renderProducts(allProducts);
+        renderProductGrid(allProducts);
     }
 
-    function renderProducts(products) {
+    // 5. Render Product Cards
+    function renderProductGrid(products) {
         const grid = document.getElementById('product-grid');
         if (products.length === 0) {
-            grid.innerHTML = '<p>No items found in this category.</p>';
+            grid.innerHTML = '<p>No items found.</p>';
             return;
         }
 
         grid.innerHTML = products.map(p => `
-            <div class="card">
-                <img src="${p.image_url || 'https://via.placeholder.com/300x180?text=Fresh+Fish'}" alt="${p.name}">
+            <div class="product-card">
+                <img src="${p.image_url || 'https://via.placeholder.com/260x180?text=Fresh+Fish'}" alt="${p.name}">
                 <div class="card-body">
-                    <div class="card-title">${p.name}</div>
-                    <div class="vendor-tag">Vendor: ${p.vendors ? p.vendors.store_name : 'Tinambac Vendor'}</div>
-                    <div class="price">₱${parseFloat(p.price).toFixed(2)} / kg</div>
-                    <button class="btn-add" onclick="addToCart('${p.id}')">Add to Cart</button>
+                    <div>
+                        <div class="product-title">${p.name}</div>
+                        <div class="vendor-info">Seller: ${p.vendors ? p.vendors.store_name : 'Tinambac Vendor'}</div>
+                        <div class="product-price">₱${parseFloat(p.price).toFixed(2)} / kg</div>
+                    </div>
+                    <button class="btn-action" onclick="addToCart('${p.id}')">Add to Cart</button>
                 </div>
             </div>
         `).join('');
     }
 
-    function filterCategory(catId) {
+    // 6. Filter Logic
+    function filterProducts(catId) {
         if (catId === 'all') {
-            renderProducts(allProducts);
+            renderProductGrid(allProducts);
         } else {
-            renderProducts(allProducts.filter(p => p.category_id === catId));
+            renderProductGrid(allProducts.filter(p => p.category_id === catId));
         }
     }
 
+    // 7. Cart Functionality
     function addToCart(productId) {
-        const product = allProducts.find(p => p.id === productId);
-        if (!product) return;
+        const prod = allProducts.find(p => p.id === productId);
+        if (!prod) return;
 
-        const existing = cart.find(item => item.id === productId);
+        const existing = cart.find(i => i.id === productId);
         if (existing) {
             existing.qty += 1;
         } else {
-            cart.push({ id: product.id, name: product.name, price: product.price, qty: 1 });
+            cart.push({ id: prod.id, name: prod.name, price: prod.price, qty: 1 });
         }
-        updateCartCount();
+
+        updateCartUI();
+        alert(`${prod.name} added to cart!`);
     }
 
-    function updateCartCount() {
-        document.getElementById('cart-count').innerText = cart.reduce((sum, item) => sum + item.qty, 0);
-    }
+    function updateCartUI() {
+        const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+        document.getElementById('cart-count').innerText = totalItems;
 
-    function openCartModal() {
-        const summary = document.getElementById('cart-summary');
+        const list = document.getElementById('cart-items-list');
         if (cart.length === 0) {
-            summary.innerHTML = '<p>Cart is currently empty.</p>';
-        } else {
-            let total = 0;
-            summary.innerHTML = cart.map(item => {
-                const sub = item.price * item.qty;
-                total += sub;
-                return `<div>${item.name} - ${item.qty} kg @ ₱${item.price} = <strong>₱${sub.toFixed(2)}</strong></div>`;
-            }).join('') + `<hr><div style="margin-top:0.5rem;"><strong>Total Amount: ₱${total.toFixed(2)}</strong></div>`;
+            list.innerHTML = '<p>Cart is empty.</p>';
+            return;
         }
-        document.getElementById('cart-modal').style.display = 'flex';
+
+        let grandTotal = 0;
+        list.innerHTML = cart.map(item => {
+            const sub = item.price * item.qty;
+            grandTotal += sub;
+            return `<div><strong>${item.name}</strong> - ${item.qty} kg @ ₱${item.price} = ₱${sub.toFixed(2)}</div>`;
+        }).join('') + `<br><div><strong>Total: ₱${grandTotal.toFixed(2)}</strong></div>`;
     }
 
-    function closeCartModal() {
-        document.getElementById('cart-modal').style.display = 'none';
-    }
-
+    // 8. Order Submission
     async function handleCheckout(e) {
         e.preventDefault();
         if (cart.length === 0) {
-            alert('Please add products to your cart before placing an order.');
+            alert('Your cart is empty!');
             return;
         }
 
@@ -264,68 +298,75 @@
         const phone = document.getElementById('cust-phone').value;
         const barangay = document.getElementById('cust-barangay').value;
         const address = document.getElementById('cust-address').value;
-        const paymentMethod = document.getElementById('payment-method').value;
-
         const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
         try {
-            // 1. Create/Insert Customer
-            const { data: customer, error: custErr } = await supabase
+            // Save Customer
+            const { data: customer, error: cErr } = await supabase
                 .from('customers')
                 .insert([{ name, phone }])
                 .select().single();
-            if (custErr) throw custErr;
+            if (cErr) throw cErr;
 
-            // 2. Insert Delivery Address
-            const { data: addr, error: addrErr } = await supabase
+            // Save Address
+            const { data: addr, error: aErr } = await supabase
                 .from('delivery_addresses')
                 .insert([{ customer_id: customer.id, barangay, address_line: address }])
                 .select().single();
-            if (addrErr) throw addrErr;
+            if (aErr) throw aErr;
 
-            // 3. Insert Main Order
-            const { data: order, error: orderErr } = await supabase
+            // Create Order
+            const { data: order, error: oErr } = await supabase
                 .from('orders')
                 .insert([{ customer_id: customer.id, delivery_address_id: addr.id, total_amount: totalAmount, status: 'pending' }])
                 .select().single();
-            if (orderErr) throw orderErr;
+            if (oErr) throw oErr;
 
-            // 4. Insert Order Items
+            // Create Order Items
             const items = cart.map(item => ({
                 order_id: order.id,
                 product_id: item.id,
                 quantity: item.qty,
                 price: item.price
             }));
-            const { error: itemsErr } = await supabase.from('order_items').insert(items);
-            if (itemsErr) throw itemsErr;
+            const { error: iErr } = await supabase.from('order_items').insert(items);
+            if (iErr) throw iErr;
 
-            // 5. Insert Payment Record
-            await supabase.from('payments').insert([{
-                order_id: order.id,
-                amount: totalAmount,
-                payment_method: paymentMethod,
-                status: 'pending'
-            }]);
-
-            // 6. Insert System Notification for Vendors
-            await supabase.from('notifications').insert([{
-                title: 'New Order Received',
-                message: `Order #${order.id.slice(0,8)} placed by ${name} for ₱${totalAmount.toFixed(2)}`
-            }]);
-
-            alert('Order placed successfully! Vendors will be notified.');
+            alert('Order placed successfully!');
             cart = [];
-            updateCartCount();
-            closeCartModal();
+            updateCartUI();
+            closeModal('cart-modal');
 
         } catch (err) {
-            console.error('Checkout failed:', err);
-            alert('Failed to submit order. Please verify table permissions or console logs.');
+            console.error(err);
+            alert('Failed to place order. Ensure SQL script in Step 1 was executed in Supabase.');
         }
     }
 
-    window.onload = loadData;
+    // 9. Login/Auth Handling
+    async function handleAuth(e) {
+        e.preventDefault();
+        const email = document.getElementById('auth-email').value;
+        const password = document.getElementById('auth-password').value;
+
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+            // If user doesn't exist, try signing up
+            const { data: signUpData, error: signUpErr } = await supabase.auth.signUp({ email, password });
+            if (signUpErr) {
+                alert('Auth error: ' + signUpErr.message);
+                return;
+            }
+            alert('Account created and logged in!');
+        } else {
+            alert('Logged in successfully!');
+        }
+        closeModal('login-modal');
+    }
+
+    // Helper Modal Functions
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 </script>
 </body>
 </html>
